@@ -1,26 +1,866 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import {
+  Bot,
+  MessageSquare,
+  ShieldCheck,
+  TrendingUp,
+  Zap,
+  Users,
+  Workflow,
+  Plug,
+  Check,
+  X,
+  Menu,
+  ArrowRight,
+  Sparkles,
+  Headphones,
+  LineChart,
+} from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. For sites with multiple pages (About, Services, Contact, etc.),
-// create separate route files (about.tsx, services.tsx, contact.tsx) — don't put all pages in this file.
-function PlaceholderIndex() {
+const NAV = [
+  { href: "#sobre", label: "Sobre" },
+  { href: "#beneficios", label: "Benefícios" },
+  { href: "#como-funciona", label: "Como funciona" },
+  { href: "#planos", label: "Planos" },
+  { href: "#faq", label: "FAQ" },
+];
+
+function Header() {
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
+    <header
+      className={`sticky top-0 z-50 w-full transition-all ${
+        scrolled
+          ? "border-b border-border/60 bg-background/80 backdrop-blur-xl"
+          : "bg-transparent"
+      }`}
     >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <a href="#top" className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary-glow shadow-[var(--shadow-glow)]">
+            <Bot className="h-5 w-5 text-primary-foreground" />
+          </div>
+          <span className="text-lg font-bold tracking-tight">Drax</span>
+        </a>
+
+        <nav className="hidden items-center gap-8 md:flex">
+          {NAV.map((n) => (
+            <a
+              key={n.href}
+              href={n.href}
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {n.label}
+            </a>
+          ))}
+        </nav>
+
+        <div className="hidden items-center gap-3 md:flex">
+          <a
+            href="#login"
+            className="text-sm font-medium text-muted-foreground hover:text-foreground"
+          >
+            Entrar
+          </a>
+          <a href="#planos">
+            <Button className="bg-primary text-primary-foreground shadow-[var(--shadow-glow)] hover:bg-primary/90">
+              Assinar agora
+            </Button>
+          </a>
+        </div>
+
+        <button
+          aria-label="Abrir menu"
+          className="md:hidden"
+          onClick={() => setOpen((v) => !v)}
+        >
+          <Menu className="h-6 w-6" />
+        </button>
+      </div>
+
+      {open && (
+        <div className="border-t border-border bg-background/95 backdrop-blur md:hidden">
+          <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4">
+            {NAV.map((n) => (
+              <a
+                key={n.href}
+                href={n.href}
+                onClick={() => setOpen(false)}
+                className="text-sm text-muted-foreground"
+              >
+                {n.label}
+              </a>
+            ))}
+            <a href="#planos" onClick={() => setOpen(false)}>
+              <Button className="w-full bg-primary text-primary-foreground">Assinar agora</Button>
+            </a>
+          </div>
+        </div>
+      )}
+    </header>
+  );
+}
+
+function ChatMockup() {
+  return (
+    <div className="relative mx-auto w-full max-w-md">
+      <div className="absolute -inset-6 rounded-3xl bg-primary/20 blur-3xl" aria-hidden />
+      <div className="relative overflow-hidden rounded-2xl border border-border bg-[var(--surface)] shadow-[var(--shadow-elegant)]">
+        <div className="flex items-center justify-between border-b border-border px-4 py-3">
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-2 rounded-full bg-success" />
+            <span className="text-xs font-medium">Drax • Online</span>
+          </div>
+          <Sparkles className="h-4 w-4 text-primary" />
+        </div>
+
+        <div className="space-y-3 p-4">
+          <div className="flex items-end gap-2">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+              <Bot className="h-4 w-4" />
+            </div>
+            <div className="max-w-[78%] rounded-2xl rounded-bl-sm bg-muted px-3 py-2 text-sm">
+              Olá! Sou o assistente Drax 👋 Como posso ajudar?
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <div className="max-w-[78%] rounded-2xl rounded-br-sm bg-primary px-3 py-2 text-sm text-primary-foreground">
+              Quero falar sobre os planos
+            </div>
+          </div>
+
+          <div className="flex items-end gap-2">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+              <Bot className="h-4 w-4" />
+            </div>
+            <div className="max-w-[78%] rounded-2xl rounded-bl-sm bg-muted px-3 py-2 text-sm">
+              Vou te conectar com um humano em segundos…
+            </div>
+          </div>
+
+          <div className="flex items-center justify-center gap-2 py-1 text-[11px] uppercase tracking-wider text-primary">
+            <div className="h-px w-8 bg-primary/40" />
+            Atendente humano entrou
+            <div className="h-px w-8 bg-primary/40" />
+          </div>
+
+          <div className="flex items-end gap-2">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary-glow text-primary-foreground">
+              <Headphones className="h-4 w-4" />
+            </div>
+            <div className="max-w-[78%] rounded-2xl rounded-bl-sm bg-muted px-3 py-2 text-sm">
+              Oi! Aqui é a Marina 🙂 Vamos fechar seu plano?
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-border bg-background/40 px-4 py-3">
+          <div className="flex items-center gap-2 rounded-full bg-muted px-3 py-2 text-xs text-muted-foreground">
+            Digite uma mensagem…
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Hero() {
+  return (
+    <section id="top" className="relative overflow-hidden">
+      <div className="absolute inset-0 grid-bg opacity-40" aria-hidden />
+      <div
+        className="absolute inset-0"
+        style={{ background: "var(--gradient-hero)" }}
+        aria-hidden
       />
+      <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 py-20 sm:px-6 md:py-28 lg:grid-cols-2 lg:px-8">
+        <div className="animate-fade-up">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted-foreground">
+            <Sparkles className="h-3.5 w-3.5 text-primary" />
+            Chatbot + atendimento humano em um só lugar
+          </div>
+          <h1 className="text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
+            Atendimento que <span className="text-gradient">vende</span>.
+            <br />
+            Sem bloqueios. Sem limites.
+          </h1>
+          <p className="mt-6 max-w-xl text-lg text-muted-foreground">
+            O Drax une <strong className="text-foreground">automação inteligente</strong> e{" "}
+            <strong className="text-foreground">chat humano em tempo real</strong> numa
+            plataforma única — supere as limitações do WhatsApp e do Typebot e converta mais
+            todos os dias.
+          </p>
+
+          <div className="mt-8 flex flex-wrap items-center gap-4">
+            <a href="#planos">
+              <Button
+                size="lg"
+                className="bg-primary text-primary-foreground shadow-[var(--shadow-glow)] hover:bg-primary/90"
+              >
+                Começar agora <ArrowRight className="ml-1 h-4 w-4" />
+              </Button>
+            </a>
+            <a href="#planos">
+              <Button size="lg" variant="outline" className="border-border bg-transparent">
+                Ver planos
+              </Button>
+            </a>
+          </div>
+
+          <div className="mt-10 grid grid-cols-3 gap-6 border-t border-border pt-6 max-w-md">
+            <Stat value="+87%" label="Conversão" />
+            <Stat value="24/7" label="Atendimento" />
+            <Stat value="0" label="Bloqueios" />
+          </div>
+        </div>
+
+        <div className="animate-fade-up" style={{ animationDelay: "120ms" }}>
+          <ChatMockup />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Stat({ value, label }: { value: string; label: string }) {
+  return (
+    <div>
+      <div className="text-2xl font-bold text-gradient">{value}</div>
+      <div className="text-xs uppercase tracking-wider text-muted-foreground">{label}</div>
+    </div>
+  );
+}
+
+function Section({
+  id,
+  eyebrow,
+  title,
+  subtitle,
+  children,
+}: {
+  id?: string;
+  eyebrow?: string;
+  title: React.ReactNode;
+  subtitle?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section id={id} className="relative px-4 py-20 sm:px-6 md:py-28 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="mx-auto mb-14 max-w-2xl text-center">
+          {eyebrow && (
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium uppercase tracking-wider text-primary">
+              {eyebrow}
+            </div>
+          )}
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">{title}</h2>
+          {subtitle && (
+            <p className="mt-4 text-lg text-muted-foreground">{subtitle}</p>
+          )}
+        </div>
+        {children}
+      </div>
+    </section>
+  );
+}
+
+function About() {
+  return (
+    <Section
+      id="sobre"
+      eyebrow="O que é o Drax"
+      title={
+        <>
+          A evolução do <span className="text-gradient">Typebot</span>, com chat humano integrado.
+        </>
+      }
+      subtitle="Crie fluxos automatizados como no Typebot, mas vá além: quando o lead precisa de um humano, sua equipe assume a conversa em tempo real — tudo no mesmo lugar, sem depender do WhatsApp."
+    >
+      <div className="grid gap-6 md:grid-cols-3">
+        {[
+          {
+            icon: Workflow,
+            title: "Fluxos visuais",
+            text: "Builder drag-and-drop poderoso, no estilo Typebot.",
+          },
+          {
+            icon: Headphones,
+            title: "Humano em tempo real",
+            text: "Assuma conversas com 1 clique, com histórico completo.",
+          },
+          {
+            icon: ShieldCheck,
+            title: "Sem bloqueios",
+            text: "Plataforma própria. Sem risco de banimento.",
+          },
+        ].map((item) => (
+          <div
+            key={item.title}
+            className="border-gradient rounded-2xl p-6 transition-transform hover:-translate-y-1"
+          >
+            <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-primary/15 text-primary">
+              <item.icon className="h-5 w-5" />
+            </div>
+            <h3 className="mb-2 text-lg font-semibold">{item.title}</h3>
+            <p className="text-sm text-muted-foreground">{item.text}</p>
+          </div>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
+const BENEFITS = [
+  {
+    icon: Zap,
+    title: "Automação completa",
+    text: "Responda dúvidas, qualifique leads e agende reuniões 24/7 sem esforço.",
+  },
+  {
+    icon: Users,
+    title: "Atendimento híbrido",
+    text: "Bot atende, humano assume. A transição é instantânea e invisível para o cliente.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Sem bloqueios",
+    text: "Esqueça o medo do banimento do WhatsApp. Plataforma própria, estável e segura.",
+  },
+  {
+    icon: TrendingUp,
+    title: "+ Conversão",
+    text: "Atendimento rápido e contextual transforma curiosos em clientes pagantes.",
+  },
+  {
+    icon: LineChart,
+    title: "Escalabilidade",
+    text: "Atenda 10 ou 10.000 conversas simultâneas com a mesma performance.",
+  },
+];
+
+function Benefits() {
+  return (
+    <Section
+      id="beneficios"
+      eyebrow="Benefícios"
+      title={
+        <>
+          Por que empresas escolhem o <span className="text-gradient">Drax</span>
+        </>
+      }
+      subtitle="Tudo que falta no WhatsApp e no Typebot, reunido em uma única plataforma profissional."
+    >
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {BENEFITS.map((b) => (
+          <div
+            key={b.title}
+            className="group relative overflow-hidden rounded-2xl border border-border bg-[var(--surface)] p-6 transition-all hover:border-primary/40 hover:shadow-[var(--shadow-glow)]"
+          >
+            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary">
+              <b.icon className="h-6 w-6" />
+            </div>
+            <h3 className="mb-2 text-lg font-semibold">{b.title}</h3>
+            <p className="text-sm text-muted-foreground">{b.text}</p>
+          </div>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
+const STEPS = [
+  { n: "01", title: "Crie o fluxo", text: "Monte seu bot no editor visual em minutos." },
+  { n: "02", title: "Publique no site", text: "Cole 1 linha de código e está no ar." },
+  { n: "03", title: "Bot atende", text: "Qualifica leads e responde 24/7 sozinho." },
+  { n: "04", title: "Humano assume", text: "Sua equipe entra em tempo real e converte." },
+];
+
+function HowItWorks() {
+  return (
+    <Section
+      id="como-funciona"
+      eyebrow="Como funciona"
+      title={
+        <>
+          Do <span className="text-gradient">setup</span> à venda em 4 passos
+        </>
+      }
+      subtitle="Sem instalar nada. Sem código. Em poucos minutos seu atendimento já está rodando."
+    >
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {STEPS.map((s, i) => (
+          <div key={s.n} className="relative">
+            <div className="rounded-2xl border border-border bg-[var(--surface)] p-6 h-full">
+              <div className="mb-4 text-3xl font-bold text-gradient">{s.n}</div>
+              <h3 className="mb-2 text-lg font-semibold">{s.title}</h3>
+              <p className="text-sm text-muted-foreground">{s.text}</p>
+            </div>
+            {i < STEPS.length - 1 && (
+              <ArrowRight className="absolute -right-3 top-1/2 hidden h-5 w-5 -translate-y-1/2 text-primary/60 lg:block" />
+            )}
+          </div>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
+const FEATURES = [
+  { icon: Workflow, title: "Builder de fluxos", text: "Editor visual no-code estilo Typebot." },
+  { icon: MessageSquare, title: "Chat em tempo real", text: "Conversas instantâneas com seus leads." },
+  { icon: Users, title: "Gestão de leads", text: "CRM integrado: tags, notas e segmentos." },
+  { icon: Headphones, title: "Atendimento simultâneo", text: "Múltiplos atendentes, infinitas conversas." },
+  { icon: Plug, title: "Integrações", text: "Webhook, API, Zapier, n8n e CRMs populares." },
+  { icon: LineChart, title: "Analytics", text: "Métricas de conversão e performance da equipe." },
+];
+
+function Features() {
+  return (
+    <Section
+      eyebrow="Funcionalidades"
+      title={
+        <>
+          Tudo que você precisa para <span className="text-gradient">vender mais</span>
+        </>
+      }
+      subtitle="Uma suíte completa de atendimento e automação, pensada para PMEs que querem crescer."
+    >
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {FEATURES.map((f) => (
+          <div
+            key={f.title}
+            className="rounded-2xl border border-border bg-[var(--surface)] p-6 transition-all hover:border-primary/40"
+          >
+            <f.icon className="mb-4 h-6 w-6 text-primary" />
+            <h3 className="mb-1 text-lg font-semibold">{f.title}</h3>
+            <p className="text-sm text-muted-foreground">{f.text}</p>
+          </div>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
+const COMPARE_ROWS = [
+  { feature: "Sem risco de bloqueio", drax: true, wpp: false, typebot: true },
+  { feature: "Chatbot visual no-code", drax: true, wpp: false, typebot: true },
+  { feature: "Chat humano em tempo real", drax: true, wpp: true, typebot: false },
+  { feature: "Atendimento simultâneo ilimitado", drax: true, wpp: false, typebot: false },
+  { feature: "Gestão de leads integrada", drax: true, wpp: false, typebot: false },
+  { feature: "Escalável para alto volume", drax: true, wpp: false, typebot: true },
+];
+
+function Comparison() {
+  return (
+    <Section
+      eyebrow="Comparação"
+      title={
+        <>
+          Drax vs <span className="text-gradient">a concorrência</span>
+        </>
+      }
+      subtitle="Veja por que o Drax é a escolha mais completa para seu atendimento."
+    >
+      <div className="overflow-hidden rounded-2xl border border-border bg-[var(--surface)]">
+        <div className="grid grid-cols-4 border-b border-border bg-background/40 text-sm font-semibold">
+          <div className="p-4">Recurso</div>
+          <div className="p-4 text-center text-primary">Drax</div>
+          <div className="p-4 text-center text-muted-foreground">WhatsApp</div>
+          <div className="p-4 text-center text-muted-foreground">Typebot</div>
+        </div>
+        {COMPARE_ROWS.map((r, i) => (
+          <div
+            key={r.feature}
+            className={`grid grid-cols-4 items-center text-sm ${
+              i % 2 === 0 ? "bg-transparent" : "bg-background/20"
+            }`}
+          >
+            <div className="p-4">{r.feature}</div>
+            <Cell yes={r.drax} highlight />
+            <Cell yes={r.wpp} />
+            <Cell yes={r.typebot} />
+          </div>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
+function Cell({ yes, highlight }: { yes: boolean; highlight?: boolean }) {
+  return (
+    <div className="p-4 text-center">
+      {yes ? (
+        <Check
+          className={`mx-auto h-5 w-5 ${highlight ? "text-primary" : "text-success"}`}
+        />
+      ) : (
+        <X className="mx-auto h-5 w-5 text-muted-foreground/50" />
+      )}
+    </div>
+  );
+}
+
+const PLANS = [
+  {
+    name: "Starter",
+    price: { monthly: 97, yearly: 77 },
+    desc: "Para começar a automatizar seu atendimento.",
+    features: [
+      "1 bot ativo",
+      "1.000 conversas/mês",
+      "2 atendentes humanos",
+      "Integrações básicas",
+      "Suporte por e-mail",
+    ],
+    cta: "Assinar Starter",
+    highlight: false,
+  },
+  {
+    name: "Pro",
+    price: { monthly: 247, yearly: 197 },
+    desc: "Para empresas em crescimento que querem escalar.",
+    features: [
+      "5 bots ativos",
+      "10.000 conversas/mês",
+      "10 atendentes humanos",
+      "Todas as integrações",
+      "Analytics avançado",
+      "Suporte prioritário",
+    ],
+    cta: "Assinar Pro",
+    highlight: true,
+  },
+  {
+    name: "Business",
+    price: { monthly: 597, yearly: 497 },
+    desc: "Para operações de alto volume e times grandes.",
+    features: [
+      "Bots ilimitados",
+      "Conversas ilimitadas",
+      "Atendentes ilimitados",
+      "API + Webhooks",
+      "Gerente de sucesso",
+      "SLA dedicado",
+    ],
+    cta: "Assinar Business",
+    highlight: false,
+  },
+];
+
+function Pricing() {
+  const [yearly, setYearly] = useState(false);
+
+  return (
+    <Section
+      id="planos"
+      eyebrow="Planos"
+      title={
+        <>
+          Escolha o plano ideal para o seu <span className="text-gradient">negócio</span>
+        </>
+      }
+      subtitle="Sem fidelidade. Cancele quando quiser. 7 dias de garantia."
+    >
+      <div className="mb-10 flex items-center justify-center gap-3">
+        <span className={`text-sm ${!yearly ? "text-foreground" : "text-muted-foreground"}`}>
+          Mensal
+        </span>
+        <button
+          onClick={() => setYearly((v) => !v)}
+          className={`relative h-7 w-14 rounded-full border border-border transition-colors ${
+            yearly ? "bg-primary" : "bg-muted"
+          }`}
+          aria-label="Alternar mensal/anual"
+        >
+          <span
+            className={`absolute top-0.5 h-5 w-5 rounded-full bg-background transition-transform ${
+              yearly ? "translate-x-7" : "translate-x-0.5"
+            }`}
+          />
+        </button>
+        <span className={`text-sm ${yearly ? "text-foreground" : "text-muted-foreground"}`}>
+          Anual <span className="ml-1 rounded bg-primary/15 px-1.5 py-0.5 text-xs text-primary">-20%</span>
+        </span>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        {PLANS.map((p) => {
+          const price = yearly ? p.price.yearly : p.price.monthly;
+          return (
+            <div
+              key={p.name}
+              className={`relative flex flex-col rounded-2xl border p-8 transition-all ${
+                p.highlight
+                  ? "border-primary/60 bg-[var(--surface-elevated)] shadow-[var(--shadow-glow)]"
+                  : "border-border bg-[var(--surface)] hover:border-primary/30"
+              }`}
+            >
+              {p.highlight && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-primary to-primary-glow px-3 py-1 text-xs font-semibold text-primary-foreground">
+                  Mais popular
+                </div>
+              )}
+              <h3 className="text-xl font-bold">{p.name}</h3>
+              <p className="mt-1 text-sm text-muted-foreground">{p.desc}</p>
+              <div className="mt-6 flex items-baseline gap-1">
+                <span className="text-4xl font-bold">R${price}</span>
+                <span className="text-sm text-muted-foreground">/mês</span>
+              </div>
+              {yearly && (
+                <p className="mt-1 text-xs text-primary">cobrado anualmente</p>
+              )}
+
+              <ul className="mt-6 flex-1 space-y-3">
+                {p.features.map((f) => (
+                  <li key={f} className="flex items-start gap-2 text-sm">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <Button
+                size="lg"
+                className={`mt-8 ${
+                  p.highlight
+                    ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                }`}
+              >
+                {p.cta}
+              </Button>
+            </div>
+          );
+        })}
+      </div>
+
+      <p className="mt-8 text-center text-xs text-muted-foreground">
+        Pagamento seguro processado via Asaas • Pix, boleto e cartão
+      </p>
+    </Section>
+  );
+}
+
+const FAQ_ITEMS = [
+  {
+    q: "O Drax substitui o WhatsApp?",
+    a: "O Drax é uma alternativa ao WhatsApp para o atendimento no seu site, sem o risco de bloqueios. Você pode usar os dois em conjunto, mas muitas empresas migram 100% do atendimento para o Drax pela estabilidade e pelos recursos avançados.",
+  },
+  {
+    q: "Preciso instalar algum software?",
+    a: "Não. O Drax é 100% web. Basta criar sua conta, montar seu fluxo no editor visual e colar uma linha de código no seu site. Em minutos seu atendimento está no ar.",
+  },
+  {
+    q: "Existe limite de atendentes ou conversas?",
+    a: "Cada plano tem seus limites, mas o plano Business oferece atendentes e conversas ilimitadas. A plataforma é projetada para escalar de 10 a 10.000+ conversas simultâneas.",
+  },
+  {
+    q: "É difícil de usar?",
+    a: "Não. O editor de fluxos é drag-and-drop, sem necessidade de código. Qualquer pessoa da sua equipe consegue montar um bot funcional em poucos minutos.",
+  },
+  {
+    q: "Posso integrar com meu CRM?",
+    a: "Sim. O Drax oferece integrações nativas com os principais CRMs e ferramentas de marketing, além de webhooks e API aberta para integrações personalizadas.",
+  },
+  {
+    q: "Como funciona o pagamento?",
+    a: "O pagamento é mensal ou anual, processado de forma segura via Asaas (Pix, boleto ou cartão). Sem fidelidade — cancele quando quiser.",
+  },
+];
+
+function FAQ() {
+  return (
+    <Section
+      id="faq"
+      eyebrow="FAQ"
+      title={
+        <>
+          Perguntas <span className="text-gradient">frequentes</span>
+        </>
+      }
+    >
+      <div className="mx-auto max-w-3xl">
+        <Accordion type="single" collapsible className="space-y-3">
+          {FAQ_ITEMS.map((item, i) => (
+            <AccordionItem
+              key={i}
+              value={`item-${i}`}
+              className="rounded-xl border border-border bg-[var(--surface)] px-5"
+            >
+              <AccordionTrigger className="text-left text-base font-semibold hover:no-underline">
+                {item.q}
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground">{item.a}</AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </div>
+    </Section>
+  );
+}
+
+function FinalCTA() {
+  return (
+    <section className="px-4 pb-20 sm:px-6 lg:px-8">
+      <div className="relative mx-auto max-w-6xl overflow-hidden rounded-3xl border border-primary/30 p-10 text-center md:p-16">
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, oklch(0.82 0.15 185 / 0.20), transparent 70%)",
+          }}
+          aria-hidden
+        />
+        <div className="relative">
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+            Pronto para <span className="text-gradient">vender mais</span> sem bloqueios?
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
+            Junte-se às empresas que já trocaram o caos do WhatsApp pelo atendimento profissional do Drax.
+          </p>
+          <div className="mt-8">
+            <a href="#planos">
+              <Button
+                size="lg"
+                className="bg-primary text-primary-foreground shadow-[var(--shadow-glow)] hover:bg-primary/90"
+              >
+                Começar agora <ArrowRight className="ml-1 h-4 w-4" />
+              </Button>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="border-t border-border bg-background/60">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-4 lg:px-8">
+        <div>
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary-glow">
+              <Bot className="h-5 w-5 text-primary-foreground" />
+            </div>
+            <span className="text-lg font-bold">Drax</span>
+          </div>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Chatbot + chat humano em tempo real. Atendimento sem bloqueios.
+          </p>
+        </div>
+        <FooterCol
+          title="Produto"
+          links={[
+            { label: "Benefícios", href: "#beneficios" },
+            { label: "Como funciona", href: "#como-funciona" },
+            { label: "Planos", href: "#planos" },
+          ]}
+        />
+        <FooterCol
+          title="Empresa"
+          links={[
+            { label: "Sobre", href: "#sobre" },
+            { label: "FAQ", href: "#faq" },
+            { label: "Contato", href: "mailto:contato@drax.com.br" },
+          ]}
+        />
+        <FooterCol
+          title="Legal"
+          links={[
+            { label: "Termos", href: "#" },
+            { label: "Privacidade", href: "#" },
+            { label: "Cookies", href: "#" },
+          ]}
+        />
+      </div>
+      <div className="border-t border-border">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-6 text-xs text-muted-foreground sm:flex-row sm:px-6 lg:px-8">
+          <span>© {new Date().getFullYear()} Drax. Todos os direitos reservados.</span>
+          <span>Feito com 💙 no Brasil</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+function FooterCol({
+  title,
+  links,
+}: {
+  title: string;
+  links: { label: string; href: string }[];
+}) {
+  return (
+    <div>
+      <h4 className="mb-3 text-sm font-semibold">{title}</h4>
+      <ul className="space-y-2">
+        {links.map((l) => (
+          <li key={l.label}>
+            <a
+              href={l.href}
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {l.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function MobileCTA() {
+  return (
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/90 p-3 backdrop-blur md:hidden">
+      <a href="#planos">
+        <Button className="w-full bg-primary text-primary-foreground shadow-[var(--shadow-glow)]">
+          Assinar agora <ArrowRight className="ml-1 h-4 w-4" />
+        </Button>
+      </a>
     </div>
   );
 }
 
 function Index() {
-  return <PlaceholderIndex />;
+  return (
+    <div className="min-h-screen pb-20 md:pb-0">
+      <Header />
+      <main>
+        <Hero />
+        <About />
+        <Benefits />
+        <HowItWorks />
+        <Features />
+        <Comparison />
+        <Pricing />
+        <FAQ />
+        <FinalCTA />
+      </main>
+      <Footer />
+      <MobileCTA />
+    </div>
+  );
 }
