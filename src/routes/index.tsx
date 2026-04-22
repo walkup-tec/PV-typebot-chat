@@ -24,6 +24,17 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useServerFn } from "@tanstack/react-start";
+import { createAsaasCheckout } from "@/server/asaas.functions";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -522,66 +533,69 @@ function Cell({ yes, highlight }: { yes: boolean; highlight?: boolean }) {
   );
 }
 
-const PLANS = [
-  {
-    name: "Starter",
-    price: { monthly: 97, yearly: 77 },
-    desc: "Para começar a automatizar seu atendimento.",
-    features: [
-      "1 bot ativo",
-      "1.000 conversas/mês",
-      "2 atendentes humanos",
-      "Integrações básicas",
-      "Suporte por e-mail",
-    ],
-    cta: "Assinar Starter",
-    highlight: false,
-  },
-  {
-    name: "Pro",
-    price: { monthly: 247, yearly: 197 },
-    desc: "Para empresas em crescimento que querem escalar.",
-    features: [
-      "5 bots ativos",
-      "10.000 conversas/mês",
-      "10 atendentes humanos",
-      "Todas as integrações",
-      "Analytics avançado",
-      "Suporte prioritário",
-    ],
-    cta: "Assinar Pro",
-    highlight: true,
-  },
-  {
-    name: "Business",
-    price: { monthly: 597, yearly: 497 },
-    desc: "Para operações de alto volume e times grandes.",
-    features: [
-      "Bots ilimitados",
-      "Conversas ilimitadas",
-      "Atendentes ilimitados",
-      "API + Webhooks",
-      "Gerente de sucesso",
-      "SLA dedicado",
-    ],
-    cta: "Assinar Business",
-    highlight: false,
-  },
+const BUSINESS_FEATURES = [
+  "Bots ilimitados",
+  "Conversas ilimitadas",
+  "Atendentes humanos ilimitados",
+  "Builder de fluxos completo (estilo Typebot)",
+  "Chat humano em tempo real",
+  "Gestão de leads (CRM integrado)",
+  "Integrações: API, Webhooks, Zapier, n8n",
+  "Analytics avançado e relatórios",
+  "Suporte prioritário",
+  "Sem risco de bloqueios",
 ];
 
 function Pricing() {
   const [yearly, setYearly] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [form, setForm] = useState({ name: "", email: "", cpfCnpj: "" });
+  const checkout = useServerFn(createAsaasCheckout);
+
+  const monthly = 190;
+  const yearlyTotal = 1188;
+  const yearlyMonthly = (yearlyTotal / 12).toFixed(2).replace(".", ",");
+  const savings = monthly * 12 - yearlyTotal;
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await checkout({
+        data: {
+          name: form.name,
+          email: form.email,
+          cpfCnpj: form.cpfCnpj,
+          cycle: yearly ? "YEARLY" : "MONTHLY",
+        },
+      });
+      if (res.invoiceUrl) {
+        window.location.href = res.invoiceUrl;
+      } else {
+        setError(
+          "Assinatura criada, mas não recebemos o link de cobrança. Verifique seu e-mail.",
+        );
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao processar assinatura.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Section
       id="planos"
-      eyebrow="Planos"
+      eyebrow="Plano único"
       title={
         <>
-          Escolha o plano ideal para o seu <span className="text-gradient">negócio</span>
+          Tudo do Drax em um único <span className="text-gradient">plano Business</span>
         </>
       }
-      subtitle="Sem fidelidade. Cancele quando quiser. 7 dias de garantia."
+      subtitle="Sem fidelidade. Cancele quando quiser. Pague mensal ou anual com até 48% de economia."
     >
       <div className="mb-10 flex items-center justify-center gap-3">
         <span className={`text-sm ${!yearly ? "text-foreground" : "text-muted-foreground"}`}>
@@ -601,64 +615,120 @@ function Pricing() {
           />
         </button>
         <span className={`text-sm ${yearly ? "text-foreground" : "text-muted-foreground"}`}>
-          Anual <span className="ml-1 rounded bg-primary/15 px-1.5 py-0.5 text-xs text-primary">-20%</span>
+          Anual{" "}
+          <span className="ml-1 rounded bg-primary/15 px-1.5 py-0.5 text-xs text-primary">
+            economize R${savings.toFixed(0)}
+          </span>
         </span>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        {PLANS.map((p) => {
-          const price = yearly ? p.price.yearly : p.price.monthly;
-          return (
-            <div
-              key={p.name}
-              className={`relative flex flex-col rounded-2xl border p-8 transition-all ${
-                p.highlight
-                  ? "border-primary/60 bg-[var(--surface-elevated)] shadow-[var(--shadow-glow)]"
-                  : "border-border bg-[var(--surface)] hover:border-primary/30"
-              }`}
-            >
-              {p.highlight && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-primary to-primary-glow px-3 py-1 text-xs font-semibold text-primary-foreground">
-                  Mais popular
-                </div>
-              )}
-              <h3 className="text-xl font-bold">{p.name}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{p.desc}</p>
-              <div className="mt-6 flex items-baseline gap-1">
-                <span className="text-4xl font-bold">R${price}</span>
-                <span className="text-sm text-muted-foreground">/mês</span>
-              </div>
-              {yearly && (
-                <p className="mt-1 text-xs text-primary">cobrado anualmente</p>
-              )}
+      <div className="mx-auto max-w-xl">
+        <div className="relative flex flex-col rounded-3xl border border-primary/60 bg-[var(--surface-elevated)] p-8 shadow-[var(--shadow-glow)] md:p-10">
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-primary to-primary-glow px-3 py-1 text-xs font-semibold text-primary-foreground">
+            Acesso completo
+          </div>
 
-              <ul className="mt-6 flex-1 space-y-3">
-                {p.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-sm">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
+          <h3 className="text-2xl font-bold">Business</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Todos os recursos do Drax, sem limites.
+          </p>
 
-              <Button
-                size="lg"
-                className={`mt-8 ${
-                  p.highlight
-                    ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                }`}
-              >
-                {p.cta}
-              </Button>
-            </div>
-          );
-        })}
+          <div className="mt-6 flex items-baseline gap-1">
+            <span className="text-5xl font-bold">
+              R$ {yearly ? yearlyMonthly : "190,00"}
+            </span>
+            <span className="text-sm text-muted-foreground">/mês</span>
+          </div>
+          {yearly ? (
+            <p className="mt-1 text-xs text-primary">
+              R$ 1.188,00 cobrados anualmente
+            </p>
+          ) : (
+            <p className="mt-1 text-xs text-muted-foreground">cobrança mensal recorrente</p>
+          )}
+
+          <ul className="mt-6 grid flex-1 gap-3 sm:grid-cols-2">
+            {BUSINESS_FEATURES.map((f) => (
+              <li key={f} className="flex items-start gap-2 text-sm">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <span>{f}</span>
+              </li>
+            ))}
+          </ul>
+
+          <Button
+            size="lg"
+            onClick={() => setOpen(true)}
+            className="mt-8 bg-primary text-primary-foreground shadow-[var(--shadow-glow)] hover:bg-primary/90"
+          >
+            Assinar agora <ArrowRight className="ml-1 h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
       <p className="mt-8 text-center text-xs text-muted-foreground">
         Pagamento seguro processado via Asaas • Pix, boleto e cartão
       </p>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Assinar plano Business</DialogTitle>
+            <DialogDescription>
+              {yearly
+                ? "R$ 1.188,00 cobrados anualmente (equivalente a R$ 99,00/mês)."
+                : "R$ 190,00/mês — cobrança recorrente."}
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSubscribe} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Nome completo</Label>
+              <Input
+                id="name"
+                required
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">E-mail</Label>
+              <Input
+                id="email"
+                type="email"
+                required
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="cpfCnpj">CPF ou CNPJ</Label>
+              <Input
+                id="cpfCnpj"
+                required
+                placeholder="Apenas números"
+                value={form.cpfCnpj}
+                onChange={(e) => setForm({ ...form, cpfCnpj: e.target.value })}
+              />
+            </div>
+            {error && (
+              <p className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+                {error}
+              </p>
+            )}
+            <Button
+              type="submit"
+              size="lg"
+              disabled={loading}
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              {loading ? "Processando…" : "Continuar para pagamento"}
+            </Button>
+            <p className="text-center text-xs text-muted-foreground">
+              Você será redirecionado para o checkout seguro do Asaas.
+            </p>
+          </form>
+        </DialogContent>
+      </Dialog>
     </Section>
   );
 }
