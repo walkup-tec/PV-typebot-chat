@@ -744,7 +744,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "Existe limite de atendentes ou conversas?",
-    a: "Cada plano tem seus limites, mas o plano Business oferece atendentes e conversas ilimitadas. A plataforma é projetada para escalar de 10 a 10.000+ conversas simultâneas.",
+    a: "Não. O plano Business inclui atendentes humanos, bots e conversas ilimitadas. A plataforma é projetada para escalar de 10 a 10.000+ conversas simultâneas com a mesma performance.",
   },
   {
     q: "É difícil de usar?",
