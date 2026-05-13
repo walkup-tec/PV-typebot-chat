@@ -67,11 +67,12 @@ function Header() {
       }`}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <a href="#top" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary-glow shadow-[var(--shadow-glow)]">
-            <Bot className="h-5 w-5 text-primary-foreground" />
-          </div>
-          <span className="text-lg font-bold tracking-tight">Drax</span>
+        <a href="#top" className="flex items-center">
+          <img
+            src="/drax-logo-footer.png"
+            alt="Drax"
+            className="h-8 w-auto max-w-[128px] object-contain sm:h-9"
+          />
         </a>
 
         <nav className="hidden items-center gap-8 md:flex">
@@ -827,11 +828,12 @@ function Footer() {
     <footer className="border-t border-border bg-background/60">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-4 lg:px-8">
         <div>
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary-glow">
-              <Bot className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <span className="text-lg font-bold">Drax</span>
+          <div className="flex items-center">
+            <img
+              src="/drax-logo-footer.png"
+              alt="Drax"
+              className="h-8 w-auto max-w-[128px] object-contain sm:h-9"
+            />
           </div>
           <p className="mt-3 text-sm text-muted-foreground">
             Chatbot + chat humano em tempo real. Atendimento sem bloqueios.

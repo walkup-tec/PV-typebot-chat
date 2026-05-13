@@ -29,11 +29,13 @@ const mimeByExt = {
   ".map": "application/json; charset=utf-8",
 };
 
+const PUBLIC_ROOT_FILES = new Set(["/drax-logo-footer.png", "/favicon.ico", "/robots.txt"]);
+
 const isSafeClientPath = (pathname) => {
   const pathOnly = pathname.split("?")[0];
-  if (!pathOnly.startsWith("/assets/") && pathOnly !== "/favicon.ico" && pathOnly !== "/robots.txt") {
-    return null;
-  }
+  const isAsset = pathOnly.startsWith("/assets/");
+  const isPublicRoot = PUBLIC_ROOT_FILES.has(pathOnly);
+  if (!isAsset && !isPublicRoot) return null;
   const rel = pathOnly.replace(/^\//, "");
   if (!rel || rel.split("/").some((p) => p === "..")) return null;
   const candidate = resolve(join(clientRoot, rel));
