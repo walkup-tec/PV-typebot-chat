@@ -16,8 +16,8 @@ import {
   Sparkles,
   Headphones,
   LineChart,
-  Phone,
 } from "lucide-react";
+import { WhatsAppBrandIcon } from "@/components/icons/WhatsAppBrandIcon";
 import {
   Accordion,
   AccordionContent,
@@ -328,7 +328,7 @@ function About() {
             text: "Plataforma própria. Sem risco de banimento.",
           },
           {
-            icon: Phone,
+            icon: WhatsAppBrandIcon,
             title: "Integração com WhatsApp",
             text: "Se quiser, você pode direcionar o final do seu atendimento para um número de WhatsApp",
           },
