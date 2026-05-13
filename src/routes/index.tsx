@@ -34,6 +34,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { createSalesSubscription, resolvePainelUrl } from "@/lib/salesApi";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -609,27 +610,47 @@ function Pricing() {
       }
       subtitle="Sem fidelidade. Cancele quando quiser. Pague mensal ou anual com até 48% de economia."
     >
-      <div className="mb-10 flex items-center justify-center gap-3">
-        <span className={`text-sm ${!yearly ? "text-foreground" : "text-muted-foreground"}`}>
+      <div className="mb-10 flex flex-wrap items-center justify-center gap-x-5 gap-y-3 px-2">
+        <span
+          className={cn(
+            "shrink-0 text-sm font-medium",
+            !yearly ? "text-foreground" : "text-muted-foreground",
+          )}
+        >
           Mensal
         </span>
         <button
+          type="button"
+          role="switch"
+          aria-checked={yearly}
           onClick={() => setYearly((v) => !v)}
-          className={`relative h-7 w-14 rounded-full border border-border transition-colors ${
-            yearly ? "bg-primary" : "bg-muted"
-          }`}
-          aria-label="Alternar mensal/anual"
+          className={cn(
+            "relative inline-flex h-9 w-[52px] shrink-0 cursor-pointer rounded-full border-2 transition-colors duration-200",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            yearly
+              ? "border-primary/40 bg-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.18)]"
+              : "border-border bg-secondary shadow-[inset_0_1px_3px_rgba(0,0,0,0.45)]",
+          )}
+          aria-label="Alternar cobrança mensal ou anual"
         >
           <span
-            className={`absolute top-0.5 h-5 w-5 rounded-full bg-background transition-transform ${
-              yearly ? "translate-x-7" : "translate-x-0.5"
-            }`}
+            className={cn(
+              "pointer-events-none absolute left-[3px] top-1/2 h-6 w-6 -translate-y-1/2 rounded-full shadow-md ring-2 transition-transform duration-200 ease-out",
+              yearly
+                ? "translate-x-[22px] bg-primary-foreground ring-primary-foreground/25"
+                : "translate-x-0 bg-foreground ring-background/30",
+            )}
           />
         </button>
-        <span className={`text-sm ${yearly ? "text-foreground" : "text-muted-foreground"}`}>
-          Anual{" "}
-          <span className="ml-1 rounded bg-primary/15 px-1.5 py-0.5 text-xs text-primary">
-            economize R${savings.toFixed(0)}
+        <span
+          className={cn(
+            "flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-sm font-medium",
+            yearly ? "text-foreground" : "text-muted-foreground",
+          )}
+        >
+          <span className="shrink-0">Anual</span>
+          <span className="shrink-0 rounded-md bg-primary/15 px-2 py-0.5 text-xs text-primary">
+            {`economize R$${savings.toFixed(0)}`}
           </span>
         </span>
       </div>
