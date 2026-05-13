@@ -599,6 +599,10 @@ function Pricing() {
     }
   };
 
+  const featuresMid = Math.ceil(BUSINESS_FEATURES.length / 2);
+  const featuresColLeft = BUSINESS_FEATURES.slice(0, featuresMid);
+  const featuresColRight = BUSINESS_FEATURES.slice(featuresMid);
+
   return (
     <Section
       id="planos"
@@ -680,14 +684,24 @@ function Pricing() {
             <p className="mt-1 text-xs text-muted-foreground">cobrança mensal recorrente</p>
           )}
 
-          <ul className="mt-6 grid flex-1 gap-3 sm:grid-cols-2">
-            {BUSINESS_FEATURES.map((f) => (
-              <li key={f} className="flex items-start gap-2 text-sm">
-                <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                <span>{f}</span>
-              </li>
-            ))}
-          </ul>
+          <div className="mt-6 grid flex-1 gap-6 sm:grid-cols-2 sm:items-start sm:gap-x-8 sm:gap-y-0">
+            <ul className="flex flex-col gap-2.5">
+              {featuresColLeft.map((f) => (
+                <li key={f} className="flex items-start gap-2 text-sm leading-snug">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+            <ul className="flex flex-col gap-2.5">
+              {featuresColRight.map((f) => (
+                <li key={f} className="flex items-start gap-2 text-sm leading-snug">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
 
           <Button
             size="lg"
