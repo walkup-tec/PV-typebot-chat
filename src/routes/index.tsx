@@ -625,7 +625,7 @@ function Pricing() {
           aria-checked={yearly}
           onClick={() => setYearly((v) => !v)}
           className={cn(
-            "relative inline-flex h-9 w-[52px] shrink-0 cursor-pointer rounded-full border-2 transition-colors duration-200",
+            "relative inline-flex h-7 w-[52px] shrink-0 cursor-pointer rounded-full border-2 transition-colors duration-200",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
             yearly
               ? "border-primary/40 bg-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.18)]"
@@ -635,9 +635,9 @@ function Pricing() {
         >
           <span
             className={cn(
-              "pointer-events-none absolute left-[3px] top-1/2 h-6 w-6 -translate-y-1/2 rounded-full shadow-md ring-2 transition-transform duration-200 ease-out",
+              "pointer-events-none absolute left-[3px] top-1/2 h-5 w-5 -translate-y-1/2 rounded-full shadow-md ring-2 transition-transform duration-200 ease-out",
               yearly
-                ? "translate-x-[22px] bg-primary-foreground ring-primary-foreground/25"
+                ? "translate-x-[26px] bg-primary-foreground ring-primary-foreground/25"
                 : "translate-x-0 bg-foreground ring-background/30",
             )}
           />
