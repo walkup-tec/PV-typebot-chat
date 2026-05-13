@@ -16,6 +16,7 @@ import {
   Sparkles,
   Headphones,
   LineChart,
+  Phone,
 } from "lucide-react";
 import {
   Accordion,
@@ -309,7 +310,7 @@ function About() {
       }
       subtitle="Crie fluxos automatizados como no Typebot, mas vá além: quando o lead precisa de um humano, sua equipe assume a conversa em tempo real — tudo no mesmo lugar, sem depender do WhatsApp."
     >
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
         {[
           {
             icon: Workflow,
@@ -325,6 +326,11 @@ function About() {
             icon: ShieldCheck,
             title: "Sem bloqueios",
             text: "Plataforma própria. Sem risco de banimento.",
+          },
+          {
+            icon: Phone,
+            title: "Integração com WhatsApp",
+            text: "Se quiser, você pode direcionar o final do seu atendimento para um número de WhatsApp",
           },
         ].map((item) => (
           <div
