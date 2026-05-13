@@ -313,8 +313,8 @@ function About() {
         {[
           {
             icon: Workflow,
-            title: "Fluxos visuais",
-            text: "Builder drag-and-drop poderoso, no estilo Typebot.",
+            title: "Fluxos Intuitivos",
+            text: "Seu atendimento de forma agradável e estimulante",
           },
           {
             icon: Headphones,
