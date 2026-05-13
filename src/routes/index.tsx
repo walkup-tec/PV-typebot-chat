@@ -33,8 +33,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useServerFn } from "@tanstack/react-start";
-import { createAsaasCheckout } from "@/server/asaas.functions";
+import { createSalesSubscription, resolvePainelUrl } from "@/lib/salesApi";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -89,7 +88,7 @@ function Header() {
 
         <div className="hidden items-center gap-3 md:flex">
           <a
-            href="#login"
+            href={resolvePainelUrl()}
             className="text-sm font-medium text-muted-foreground hover:text-foreground"
           >
             Entrar
@@ -552,7 +551,6 @@ function Pricing() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState({ name: "", email: "", cpfCnpj: "" });
-  const checkout = useServerFn(createAsaasCheckout);
 
   const monthly = 190;
   const yearlyTotal = 1188;
@@ -564,13 +562,11 @@ function Pricing() {
     setLoading(true);
     setError(null);
     try {
-      const res = await checkout({
-        data: {
-          name: form.name,
-          email: form.email,
-          cpfCnpj: form.cpfCnpj,
-          cycle: yearly ? "YEARLY" : "MONTHLY",
-        },
+      const res = await createSalesSubscription({
+        customerName: form.name,
+        ownerEmail: form.email,
+        cpfCnpj: form.cpfCnpj,
+        cycle: yearly ? "YEARLY" : "MONTHLY",
       });
       if (res.invoiceUrl) {
         window.location.href = res.invoiceUrl;
