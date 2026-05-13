@@ -34,6 +34,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { createSalesSubscription, resolvePainelUrl } from "@/lib/salesApi";
+import { digitsFromCpfCnpj, maskCpfCnpjInput } from "@/lib/maskCpfCnpj";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
@@ -576,13 +577,18 @@ function Pricing() {
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
+    const docDigits = digitsFromCpfCnpj(form.cpfCnpj);
+    if (docDigits.length !== 11 && docDigits.length !== 14) {
+      setError("Informe um CPF (11 dígitos) ou CNPJ (14 dígitos) completo.");
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
       const res = await createSalesSubscription({
         customerName: form.name,
         ownerEmail: form.email,
-        cpfCnpj: form.cpfCnpj,
+        cpfCnpj: digitsFromCpfCnpj(form.cpfCnpj),
         cycle: yearly ? "YEARLY" : "MONTHLY",
       });
       if (res.invoiceUrl) {
@@ -752,9 +758,15 @@ function Pricing() {
               <Input
                 id="cpfCnpj"
                 required
-                placeholder="Apenas números"
+                type="text"
+                inputMode="numeric"
+                autoComplete="off"
+                placeholder="000.000.000-00 ou 00.000.000/0000-00"
+                maxLength={18}
                 value={form.cpfCnpj}
-                onChange={(e) => setForm({ ...form, cpfCnpj: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, cpfCnpj: maskCpfCnpjInput(e.target.value) })
+                }
               />
             </div>
             {error && (
