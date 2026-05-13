@@ -408,8 +408,16 @@ function Benefits() {
 }
 
 const STEPS = [
-  { n: "01", title: "Crie o fluxo", text: "Monte seu bot no editor visual em minutos." },
-  { n: "02", title: "Publique no site", text: "Cole 1 linha de código e está no ar." },
+  {
+    n: "01",
+    title: "Criamos seus fluxos",
+    text: "Em poucos minutos nossos especialistas deixam o seu fluxo pronto.",
+  },
+  {
+    n: "02",
+    title: "Publique no site",
+    text: "Você pode integrar seu fluxo de atendimento diretamente no site da sua empresa",
+  },
   { n: "03", title: "Bot atende", text: "Qualifica leads e responde 24/7 sozinho." },
   { n: "04", title: "Humano assume", text: "Sua equipe entra em tempo real e converte." },
 ];
@@ -421,10 +429,10 @@ function HowItWorks() {
       eyebrow="Como funciona"
       title={
         <>
-          Do <span className="text-gradient">setup</span> à venda em 4 passos
+          Um time <span className="text-gradient">especializado</span> para você
         </>
       }
-      subtitle="Sem instalar nada. Sem código. Em poucos minutos seu atendimento já está rodando."
+      subtitle="Seu setup e fluxos preparados por um time especializado e com muita prática de atendimento, tudo para deixar o seu atendimento com uma qualidade 5 estrelas!"
     >
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {STEPS.map((s, i) => (
