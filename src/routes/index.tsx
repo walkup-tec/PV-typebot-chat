@@ -8,7 +8,6 @@ import {
   Zap,
   Users,
   Workflow,
-  Plug,
   Check,
   X,
   Menu,
@@ -453,11 +452,14 @@ function HowItWorks() {
 }
 
 const FEATURES = [
-  { icon: Workflow, title: "Builder de fluxos", text: "Editor visual no-code estilo Typebot." },
+  {
+    icon: Sparkles,
+    title: "Excelente experiência",
+    text: "Seu Lead com um atendimento excepcional.",
+  },
   { icon: MessageSquare, title: "Chat em tempo real", text: "Conversas instantâneas com seus leads." },
   { icon: Users, title: "Gestão de leads", text: "CRM integrado: tags, notas e segmentos." },
   { icon: Headphones, title: "Atendimento simultâneo", text: "Múltiplos atendentes, infinitas conversas." },
-  { icon: Plug, title: "Integrações", text: "Webhook, API, Zapier, n8n e CRMs populares." },
   { icon: LineChart, title: "Analytics", text: "Métricas de conversão e performance da equipe." },
 ];
 
@@ -551,10 +553,9 @@ const BUSINESS_FEATURES = [
   "Bots ilimitados",
   "Conversas ilimitadas",
   "Atendentes humanos ilimitados",
-  "Builder de fluxos completo (estilo Typebot)",
+  "Excelente experiência: atendimento excepcional ao lead",
   "Chat humano em tempo real",
   "Gestão de leads (CRM integrado)",
-  "Integrações: API, Webhooks, Zapier, n8n",
   "Analytics avançado e relatórios",
   "Suporte prioritário",
   "Sem risco de bloqueios",
