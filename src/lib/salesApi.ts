@@ -22,12 +22,32 @@ export const createSalesSubscription = async (input: {
   cpfCnpj: string;
   cycle: SalesSubscriptionCycle;
 }): Promise<{ subscriptionId: string; invoiceUrl: string | null }> => {
-  const response = await fetch(`${resolveApiBase()}/api/public/sales/subscriptions`, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(input),
-  });
-  const payload = (await response.json()) as { subscriptionId?: string; invoiceUrl?: string | null; message?: string };
+  const base = resolveApiBase();
+  const url = `${base}/api/public/sales/subscriptions`;
+
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(input),
+    });
+  } catch {
+    throw new Error(
+      `Sem conexão com a API (${base}). Confira: build da landing com VITE_API_BASE_URL apontando para a API pública HTTPS; API no ar; sem bloqueio de rede ou conteúdo misto (página HTTPS chamando API HTTP).`,
+    );
+  }
+
+  const raw = await response.text();
+  let payload: { subscriptionId?: string; invoiceUrl?: string | null; message?: string };
+  try {
+    payload = raw ? (JSON.parse(raw) as typeof payload) : {};
+  } catch {
+    throw new Error(
+      `Resposta inválida da API (${response.status}). Verifique se ${base} é realmente o servidor Drax (não HTML de CDN ou 404).`,
+    );
+  }
+
   if (!response.ok) {
     throw new Error(payload.message ?? "Erro ao processar assinatura.");
   }
