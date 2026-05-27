@@ -8,13 +8,60 @@ const resolveInjectedApiBase = (): string => {
 export const resolveApiBase = (): string => {
   const injected = resolveInjectedApiBase();
   if (injected) return injected.replace(/\/$/, "");
-  return String(import.meta.env.VITE_API_BASE_URL ?? "http://localhost:3333").trim().replace(/\/$/, "");
+  const fromEnv = String(import.meta.env.VITE_API_BASE_URL ?? "").trim().replace(/\/$/, "");
+  if (fromEnv) return fromEnv;
+  // Em produção nunca usar localhost embutido: evita bundle com API errada se o build não tiver VITE_*.
+  if (import.meta.env.DEV) return "http://localhost:3333".replace(/\/$/, "");
+  return "";
 };
 
-export const resolvePainelUrl = (): string =>
-  String(import.meta.env.VITE_PAINEL_URL ?? "http://localhost:5173").trim().replace(/\/$/, "");
+export const resolvePainelUrl = (): string => {
+  const fromEnv = String(import.meta.env.VITE_PAINEL_URL ?? "").trim().replace(/\/$/, "");
+  if (fromEnv) return fromEnv;
+  if (import.meta.env.DEV) return "http://localhost:5173".replace(/\/$/, "");
+  return "";
+};
 
 export type SalesSubscriptionCycle = "MONTHLY" | "YEARLY";
+
+export type SalesPlanDto = {
+  id: string;
+  name: string;
+  priceCents: number;
+  billingCycle: SalesSubscriptionCycle;
+};
+
+export const fetchSalesPlans = async (): Promise<{
+  plans: SalesPlanDto[];
+  paymentConfigured: boolean;
+}> => {
+  const base = resolveApiBase();
+  if (!base) {
+    return { plans: [], paymentConfigured: false };
+  }
+
+  const response = await fetch(`${base}/api/public/sales/plans`, {
+    method: "GET",
+    headers: { accept: "application/json" },
+  });
+
+  const raw = await response.text();
+  let payload: { plans?: SalesPlanDto[]; paymentConfigured?: boolean; message?: string };
+  try {
+    payload = raw ? (JSON.parse(raw) as typeof payload) : {};
+  } catch {
+    throw new Error("Resposta inválida ao carregar planos.");
+  }
+
+  if (!response.ok) {
+    throw new Error(payload.message ?? "Erro ao carregar planos.");
+  }
+
+  return {
+    plans: Array.isArray(payload.plans) ? payload.plans : [],
+    paymentConfigured: Boolean(payload.paymentConfigured),
+  };
+};
 
 export const createSalesSubscription = async (input: {
   customerName: string;
@@ -23,6 +70,11 @@ export const createSalesSubscription = async (input: {
   cycle: SalesSubscriptionCycle;
 }): Promise<{ subscriptionId: string; invoiceUrl: string | null }> => {
   const base = resolveApiBase();
+  if (!base) {
+    throw new Error(
+      "API não configurada nesta versão da página (VITE_API_BASE_URL em falta no build). Refaça o deploy da landing com variáveis de build HTTPS no Easypanel, sem localhost.",
+    );
+  }
   const url = `${base}/api/public/sales/subscriptions`;
 
   let response: Response;
@@ -32,10 +84,14 @@ export const createSalesSubscription = async (input: {
       headers: { "content-type": "application/json" },
       body: JSON.stringify(input),
     });
-  } catch {
-    throw new Error(
-      `Sem conexão com a API (${base}). Confira: build da landing com VITE_API_BASE_URL apontando para a API pública HTTPS; API no ar; sem bloqueio de rede ou conteúdo misto (página HTTPS chamando API HTTP).`,
-    );
+  } catch (cause: unknown) {
+    const hint =
+      base.startsWith("https://")
+        ? ` Teste no browser: ${base}/health — tem de aparecer JSON com "status":"ok". Se não abrir: DNS (registo A/AAAA para o subdomínio), certificado TLS, ou serviço da API parado no Easypanel.`
+        : " Confira URL da API (HTTPS) e firewall.";
+    const detail =
+      import.meta.env.DEV && cause instanceof Error && cause.message ? ` (${cause.message})` : "";
+    throw new Error(`Sem ligação à API em ${base}.${hint}${detail}`);
   }
 
   const raw = await response.text();

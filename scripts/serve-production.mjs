@@ -101,7 +101,7 @@ const server = createServer(async (req, res) => {
     console.error("[serve-production] request failed", error);
     res.statusCode = 500;
     res.setHeader("content-type", "text/plain; charset=utf-8");
-    res.end("Erro interno ao carregar a aplicacao.");
+    res.end("Erro interno ao carregar a pagina de vendas.");
   }
 });
 

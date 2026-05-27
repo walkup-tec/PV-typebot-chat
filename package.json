@@ -6,9 +6,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build",
+    "build": "node scripts/check-prod-vite-api.mjs && vite build",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
+    "start": "node scripts/serve-production.mjs",
     "start:static": "node scripts/serve-production.mjs",
     "lint": "eslint .",
     "format": "prettier --write ."
