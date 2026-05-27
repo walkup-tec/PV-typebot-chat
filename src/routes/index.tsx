@@ -753,8 +753,8 @@ function Pricing() {
       </p>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
+        <DialogContent className="gap-6 sm:max-w-md">
+          <DialogHeader className="space-y-2">
             <DialogTitle>Assinar plano Business</DialogTitle>
             <DialogDescription>
               {yearly
@@ -762,9 +762,11 @@ function Pricing() {
                 : `R$ ${formatCurrency(monthly)}/mês — cobrança recorrente.`}
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleSubscribe} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Nome completo</Label>
+          <form onSubmit={handleSubscribe} className="space-y-5">
+            <div className="flex flex-col gap-3">
+              <Label htmlFor="name" className="leading-normal">
+                Nome completo
+              </Label>
               <Input
                 id="name"
                 required
@@ -772,8 +774,10 @@ function Pricing() {
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
+            <div className="flex flex-col gap-3">
+              <Label htmlFor="email" className="leading-normal">
+                E-mail
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -782,8 +786,10 @@ function Pricing() {
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="cpfCnpj">CPF ou CNPJ</Label>
+            <div className="flex flex-col gap-3">
+              <Label htmlFor="cpfCnpj" className="leading-normal">
+                CPF ou CNPJ
+              </Label>
               <Input
                 id="cpfCnpj"
                 required
