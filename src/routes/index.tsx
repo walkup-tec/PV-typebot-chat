@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/dialog";
 import { createSalesSubscription, fetchSalesPlans, resolvePainelUrl } from "@/lib/salesApi";
 import { digitsFromCpfCnpj, maskCpfCnpjInput } from "@/lib/maskCpfCnpj";
+import { digitsFromPhone, isValidBrazilMobileDigits, maskBrazilMobileInput } from "@/lib/maskPhone";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
@@ -568,7 +569,7 @@ function Pricing() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [form, setForm] = useState({ name: "", email: "", cpfCnpj: "" });
+  const [form, setForm] = useState({ name: "", email: "", cpfCnpj: "", whatsapp: "" });
   const [paymentConfigured, setPaymentConfigured] = useState(true);
   const [monthly, setMonthly] = useState(290);
   const [yearlyTotal, setYearlyTotal] = useState(2280);
@@ -604,6 +605,11 @@ function Pricing() {
       setError("Informe um CPF (11 dígitos) ou CNPJ (14 dígitos) completo.");
       return;
     }
+    const phoneDigits = digitsFromPhone(form.whatsapp);
+    if (!isValidBrazilMobileDigits(phoneDigits)) {
+      setError("Informe um celular válido com DDD (ex.: (11) 99999-9999).");
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -611,6 +617,7 @@ function Pricing() {
         customerName: form.name,
         ownerEmail: form.email,
         cpfCnpj: digitsFromCpfCnpj(form.cpfCnpj),
+        whatsapp: phoneDigits,
         cycle: yearly ? "YEARLY" : "MONTHLY",
       });
       if (res.invoiceUrl) {
@@ -634,7 +641,6 @@ function Pricing() {
   return (
     <Section
       id="planos"
-      data-build="20260527-pv-preco-290-anual-2280-copy-filtros"
       eyebrow="Plano único"
       title={
         <>
@@ -801,6 +807,24 @@ function Pricing() {
                 value={form.cpfCnpj}
                 onChange={(e) =>
                   setForm({ ...form, cpfCnpj: maskCpfCnpjInput(e.target.value) })
+                }
+              />
+            </div>
+            <div className="flex flex-col gap-3">
+              <Label htmlFor="whatsapp" className="leading-normal">
+                Celular (WhatsApp)
+              </Label>
+              <Input
+                id="whatsapp"
+                required
+                type="tel"
+                inputMode="numeric"
+                autoComplete="tel"
+                placeholder="(11) 99999-9999"
+                maxLength={16}
+                value={form.whatsapp}
+                onChange={(e) =>
+                  setForm({ ...form, whatsapp: maskBrazilMobileInput(e.target.value) })
                 }
               />
             </div>
