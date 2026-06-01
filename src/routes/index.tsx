@@ -591,13 +591,15 @@ function Pricing() {
     billingType: null as SalesBillingType | null,
   });
   const [paymentConfigured, setPaymentConfigured] = useState(true);
+  const [pixAutomaticMonthly, setPixAutomaticMonthly] = useState(false);
   const [monthly, setMonthly] = useState(290);
   const [yearlyTotal, setYearlyTotal] = useState(2280);
 
   useEffect(() => {
     void fetchSalesPlans()
-      .then(({ plans, paymentConfigured: configured }) => {
+      .then(({ plans, paymentConfigured: configured, billingCapabilities }) => {
         setPaymentConfigured(configured);
+        setPixAutomaticMonthly(Boolean(billingCapabilities?.pixAutomaticMonthly));
         const monthlyPlan = plans.find((plan) => plan.billingCycle === "MONTHLY");
         const yearlyPlan = plans.find((plan) => plan.billingCycle === "YEARLY");
         if (monthlyPlan) setMonthly(monthlyPlan.priceCents / 100);
@@ -613,7 +615,13 @@ function Pricing() {
 
   const yearlyMonthly = (yearlyTotal / 12).toFixed(2).replace(".", ",");
   const savings = monthly * 12 - yearlyTotal;
-  const pixEnabled = true;
+  const pixEnabled = yearly || pixAutomaticMonthly;
+
+  useEffect(() => {
+    if (!pixEnabled && form.billingType === "PIX") {
+      setForm((prev) => ({ ...prev, billingType: "CREDIT_CARD" }));
+    }
+  }, [pixEnabled, form.billingType]);
   const docDigits = digitsFromCpfCnpj(form.cpfCnpj);
   const phoneDigits = digitsFromPhone(form.whatsapp);
   const hasAllInputs =
@@ -674,7 +682,14 @@ function Pricing() {
       }
       setError("Assinatura criada, mas não recebemos o link de pagamento. Verifique seu e-mail.");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao processar assinatura.");
+      const message = err instanceof Error ? err.message : "Erro ao processar assinatura.";
+      if (/CREDIT_CARD.*RECURRENT|RECURRENT.*CREDIT_CARD/i.test(message)) {
+        setError(
+          "A API de pagamentos ainda não foi atualizada para Pix Automático mensal. Use cartão ou aguarde o redeploy da API (api-typebot-crm) e tente de novo.",
+        );
+      } else {
+        setError(message);
+      }
     } finally {
       setLoading(false);
     }
