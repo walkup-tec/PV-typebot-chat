@@ -665,14 +665,17 @@ function Pricing() {
         cycle: yearly ? "YEARLY" : "MONTHLY",
       });
       const orderId = String(res.orderId ?? "").trim();
-      if (res.pixCopyPaste && orderId) {
-        sessionStorage.setItem(
-          `pix-pay-${orderId}`,
-          JSON.stringify({
-            pixCopyPaste: res.pixCopyPaste,
-            pixQrCodeBase64: res.pixQrCodeBase64 ?? "",
-          }),
-        );
+      const isPixAutomatic = res.billingKind === "pix_automatic";
+      if (orderId && (res.pixCopyPaste || isPixAutomatic)) {
+        if (res.pixCopyPaste) {
+          sessionStorage.setItem(
+            `pix-pay-${orderId}`,
+            JSON.stringify({
+              pixCopyPaste: res.pixCopyPaste,
+              pixQrCodeBase64: res.pixQrCodeBase64 ?? "",
+            }),
+          );
+        }
         window.location.href = `/?orderId=${encodeURIComponent(orderId)}&pix=1`;
         return;
       }
