@@ -1,15 +1,14 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { PagamentoPixContent } from "@/components/sales/PagamentoPixContent";
 
-/** Compatibilidade: /pagamento redireciona para a home com query (rota / sempre existe no build). */
 export const Route = createFileRoute("/pagamento")({
-  ssr: false,
   validateSearch: (search: Record<string, unknown>) => ({
     orderId: String(search.orderId ?? "").trim(),
   }),
-  beforeLoad: ({ search }) => {
-    throw redirect({
-      to: "/",
-      search: { orderId: search.orderId, pix: "1" },
-    });
-  },
+  component: PagamentoPage,
 });
+
+function PagamentoPage() {
+  const { orderId } = Route.useSearch();
+  return <PagamentoPixContent orderId={orderId} />;
+}

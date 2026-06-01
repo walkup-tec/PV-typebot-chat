@@ -80,15 +80,17 @@ const server = createServer(async (req, res) => {
       return;
     }
 
-    if (url.pathname === "/pagamento") {
+    if (url.pathname === "/" && url.searchParams.get("pix") === "1") {
       const orderId = url.searchParams.get("orderId") ?? "";
-      const target = new URL("/", url.origin);
-      if (orderId) target.searchParams.set("orderId", orderId);
-      target.searchParams.set("pix", "1");
-      res.statusCode = 302;
-      res.setHeader("location", `${target.pathname}${target.search}`);
-      res.end();
-      return;
+      if (orderId) {
+        res.statusCode = 302;
+        res.setHeader(
+          "location",
+          `/pagamento?orderId=${encodeURIComponent(orderId)}`,
+        );
+        res.end();
+        return;
+      }
     }
 
     const request = new Request(url, {
