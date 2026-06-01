@@ -6,6 +6,7 @@ import { resolvePainelUrl } from "@/lib/salesApi";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/pagamento")({
+  ssr: false,
   validateSearch: (search: Record<string, unknown>) => ({
     orderId: String(search.orderId ?? "").trim(),
   }),
