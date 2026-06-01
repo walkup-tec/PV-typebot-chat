@@ -34,14 +34,27 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { PaymentMethodSelector, type SalesBillingType } from "@/components/sales/PaymentMethodSelector";
+import { PagamentoPixContent } from "@/components/sales/PagamentoPixContent";
 import { createSalesSubscription, fetchSalesPlans, resolvePainelUrl } from "@/lib/salesApi";
 import { digitsFromCpfCnpj, maskCpfCnpjInput } from "@/lib/maskCpfCnpj";
 import { digitsFromPhone, isValidBrazilMobileDigits, maskBrazilMobileInput } from "@/lib/maskPhone";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
-  component: Index,
+  validateSearch: (search: Record<string, unknown>) => ({
+    orderId: String(search.orderId ?? "").trim(),
+    pix: String(search.pix ?? "").trim() === "1",
+  }),
+  component: IndexPage,
 });
+
+function IndexPage() {
+  const { orderId, pix } = Route.useSearch();
+  if (pix && orderId) {
+    return <PagamentoPixContent orderId={orderId} />;
+  }
+  return <Index />;
+}
 
 const NAV = [
   { href: "#sobre", label: "Sobre" },
@@ -652,7 +665,7 @@ function Pricing() {
             pixQrCodeBase64: res.pixQrCodeBase64 ?? "",
           }),
         );
-        window.location.href = `/pagamento?orderId=${encodeURIComponent(orderId)}`;
+        window.location.href = `/?orderId=${encodeURIComponent(orderId)}&pix=1`;
         return;
       }
       if (res.invoiceUrl) {
